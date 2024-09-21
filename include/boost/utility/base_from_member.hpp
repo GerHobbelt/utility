@@ -131,13 +131,16 @@ protected:
     !defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES) && \
     !defined(BOOST_NO_CXX11_FUNCTION_TEMPLATE_DEFAULT_ARGS) && \
     !(defined(__GNUC__) && (__GNUC__ == 4) && (__GNUC_MINOR__ < 4))
-    template <typename ...T, typename EnableIf = typename
+#pragma push_macro("new")
+#undef new
+		template <typename ...T, typename EnableIf = typename
      ::boost::detail::enable_if_unrelated<base_from_member, T...>::type>
     explicit BOOST_CONSTEXPR base_from_member( T&& ...x )
         BOOST_NOEXCEPT_IF( BOOST_NOEXCEPT_EXPR(::new ((void*) 0) MemberType(
          static_cast<T&&>(x)... )) )  // no std::is_nothrow_constructible...
         : member( static_cast<T&&>(x)... )     // ...nor std::forward needed
         {}
+#pragma pop_macro("new")
 #else
     base_from_member()
         : member()
